@@ -528,6 +528,79 @@ body.presentation .vignette{opacity:.55;}
   .tut-right{padding:20px;min-height:340px}
 }
 
+/* 手机 / 平板竖屏：3D 在上，诊断面板改为底部卡片 */
+@media (max-width:760px){
+  .topbar{height:52px;gap:6px;padding:0 8px}
+  .brand{min-width:0;gap:7px}
+  .brand-mark{width:32px;height:32px}
+  .brand-mark::before{width:12px}
+  .brand-mark::after{height:12px}
+  .brand-copy h1{font-size:12px;max-width:92px;white-space:normal;line-height:1.15}
+  .brand-copy p{display:none}
+  .top-status{padding:5px 7px;gap:5px}
+  .top-status .lbl{display:none}
+  .top-status .val{font-size:9px;max-width:78px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .top-group{display:none!important}
+  .clock{display:none}
+  .icon-btn{width:28px;height:28px;font-size:12px;border-radius:5px}
+  .left-dock{display:none}
+  .right-dock{top:auto;bottom:6px;left:6px;right:6px;width:auto;height:46vh;min-height:310px;max-height:470px;border-radius:8px}
+  .right-dock .panel-head{padding:8px 9px 6px}
+  .right-dock .panel-scroll{padding:0 8px 9px}
+  .panel-title{font-size:11px}
+  .mode-btn{height:25px;font-size:8.5px}
+  .kpi .v{font-size:15px}
+  #trend-canvas{height:86px}
+  #svm-canvas{height:125px}
+  .alarm-banner{top:58px;width:calc(100vw - 12px);padding:7px 8px}
+  .alarm-banner .ab-sub{display:none}
+  .alarm-banner .ab-action{display:none}
+  .alarm-banner .ab-main{font-size:9px}
+  .view-tools{left:6px;bottom:calc(46vh + 13px);max-width:calc(100vw - 12px);flex-wrap:wrap;gap:3px;padding:3px}
+  .view-tools .vt-label{display:none}
+  .view-tools .mini-btn{height:22px;padding:0 5px;font-size:7px}
+  #detail-card{width:calc(100vw - 12px);left:6px;transform:translate(0,18px);bottom:6px;max-height:60vh;padding:10px}
+  #detail-card.show{transform:translate(0,0)}
+  .world-label.core{display:none!important}
+  .world-label .wl-sub{display:none}
+  .world-label .wl-inner{padding:2px 5px}
+  .world-label .wl-txt{font-size:7px}
+  .world-label .wl-index{width:12px;height:12px;font-size:6px}
+  #tutorial .tut-box{grid-template-columns:1fr;width:94vw;max-height:92vh;overflow:auto}
+  .tut-left{padding:18px 20px 16px;border-right:0;border-bottom:1px solid rgba(83,216,255,.11)}
+  .tut-left h2{font-size:20px}
+  .tut-left p{font-size:9px;max-width:none;margin-bottom:10px}
+  .tut-left::after{display:none}
+  .tut-right{padding:17px 20px;min-height:0}
+  .tut-step-title{font-size:14px}
+  .tut-step-text{font-size:9px;min-height:0}
+  .zoom-shell{width:98vw;height:96vh}
+  .zoom-head{height:auto;min-height:48px;flex-wrap:wrap;padding:6px 8px;gap:4px}
+  .zoom-head h3{font-size:11px}
+  .zoom-head p{display:none}
+  .zoom-action{height:24px;font-size:7px;padding:0 5px}
+  .zoom-close{width:25px;height:25px}
+  .zoom-grid.multi{grid-template-columns:1fr}
+  .zoom-grid.multi .zoom-canvas-wrap{min-height:190px}
+  .compare-strip{padding:5px 8px}
+  .cs-chip{height:20px;font-size:6.5px}
+  .scada-bezel{width:96vw;padding:12px 12px 18px}
+  .scada-shell{height:94vh}
+  .scada-actions{right:38px;top:-1px;gap:3px}
+  .scada-actions button{height:24px;font-size:6.5px;padding:0 5px}
+  .scada-close{width:28px;height:28px}
+  .scada-page-btn{height:24px;font-size:7px;padding:0 7px}
+  .scada-page-num{display:none}
+  .bigscreen-head{height:48px;padding:0 8px;gap:7px}
+  .bigscreen-head h2{font-size:11px}
+  .bigscreen-head p,.bigscreen-head .bs-live{display:none}
+  .bigscreen-head button{height:24px;font-size:7px;padding:0 7px}
+  .bigscreen-grid{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(155px,1fr);padding:5px;gap:5px}
+  .modal-box{width:96vw}
+  #report-text{min-height:250px}
+  .screen-hover-label{font-size:7px}
+}
+
 /* ============================================================
    5. 六轴机器人状态面板
    ============================================================ */
@@ -5736,8 +5809,15 @@ updateVfdDisplay();
 syncSceneMode();
 updateDiagnostics(true);
 runPipeline(false);
-setView('iso');
-$$('.mini-btn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'iso'));
+if (window.innerWidth < 760) {
+  camera.position.set(24, 15, 34);
+  controls.target.set(0, 2.0, 0);
+  controls.update();
+  $$('.mini-btn[data-view]').forEach(b => b.classList.remove('active'));
+} else {
+  setView('iso');
+  $$('.mini-btn[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === 'iso'));
+}
 
 /* ============================================================
    17. 动画主循环
