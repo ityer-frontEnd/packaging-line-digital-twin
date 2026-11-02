@@ -449,6 +449,7 @@ body.fault .svm-badge{color:#ff9daa;border-color:rgba(255,79,102,.34);background
 #toast.show{opacity:1;visibility:visible;transform:translate(-50%,0);}
 #toast.red{border-color:rgba(255,79,102,.4);color:#ffb3bc;}
 
+#mobile-panel-toggle{display:none;}
 #presentation-exit{display:none;position:absolute;right:18px;bottom:18px;z-index:90;padding:8px 13px;border-radius:5px;
   border:1px solid rgba(83,216,255,.2);background:rgba(5,17,29,.7);color:#8eb1c3;font-family:var(--mono);font-size:8px;letter-spacing:.06em;backdrop-filter:blur(8px);}
 #presentation-exit:hover{color:#fff;border-color:rgba(83,216,255,.4);}
@@ -544,7 +545,12 @@ body.presentation .vignette{opacity:.55;}
   .clock{display:none}
   .icon-btn{width:28px;height:28px;font-size:12px;border-radius:5px}
   .left-dock{display:none}
-  .right-dock{top:auto;bottom:6px;left:6px;right:6px;width:auto;height:46vh;min-height:310px;max-height:470px;border-radius:8px}
+  .right-dock{top:auto;bottom:0;left:0;right:0;width:auto;height:62vh;min-height:300px;max-height:none;border-radius:12px 12px 0 0;transform:translateY(calc(100% + 14px));opacity:0;pointer-events:none;transition:transform .28s ease,opacity .2s ease;z-index:36}
+  .right-dock.mobile-open{transform:translateY(0);opacity:1;pointer-events:auto}
+  #mobile-panel-toggle{display:flex;align-items:center;justify-content:center;position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:46;height:34px;padding:0 16px;border-radius:18px;border:1px solid rgba(83,216,255,.38);background:rgba(5,23,39,.92);color:#bcefff;font-size:9px;letter-spacing:.05em;box-shadow:0 8px 24px rgba(0,0,0,.45),0 0 18px rgba(83,216,255,.1);backdrop-filter:blur(9px)}
+  body.mobile-panel-open #mobile-panel-toggle{bottom:calc(62vh + 9px);background:rgba(8,34,52,.95)}
+  body.mobile-panel-open .view-tools{opacity:0;pointer-events:none}
+  body.mobile-panel-open .world-label{opacity:0!important}
   .right-dock .panel-head{padding:8px 9px 6px}
   .right-dock .panel-scroll{padding:0 8px 9px}
   .panel-title{font-size:11px}
@@ -556,7 +562,7 @@ body.presentation .vignette{opacity:.55;}
   .alarm-banner .ab-sub{display:none}
   .alarm-banner .ab-action{display:none}
   .alarm-banner .ab-main{font-size:9px}
-  .view-tools{left:6px;bottom:calc(46vh + 13px);max-width:calc(100vw - 12px);flex-wrap:wrap;gap:3px;padding:3px}
+  .view-tools{left:6px;bottom:52px;max-width:calc(100vw - 12px);flex-wrap:wrap;gap:3px;padding:3px;transition:opacity .2s}
   .view-tools .vt-label{display:none}
   .view-tools .mini-btn{height:22px;padding:0 5px;font-size:7px}
   #detail-card{width:calc(100vw - 12px);left:6px;transform:translate(0,18px);bottom:6px;max-height:60vh;padding:10px}
@@ -1135,6 +1141,7 @@ body.presentation .vignette{opacity:.55;}
   </div>
 
   <div id="toast"></div>
+  <button id="mobile-panel-toggle">◧ 诊断面板</button>
   <button id="presentation-exit">ESC 退出答辩模式</button>
 </div>
 
@@ -5694,6 +5701,12 @@ $('#presentation-exit').addEventListener('click', () => {
   app.presentation = false;
   document.body.classList.remove('presentation');
 });
+$('#mobile-panel-toggle').addEventListener('click', () => {
+  const dock = $('.right-dock');
+  const open = dock.classList.toggle('mobile-open');
+  document.body.classList.toggle('mobile-panel-open', open);
+  $('#mobile-panel-toggle').textContent = open ? '▾ 收起诊断' : '◧ 诊断面板';
+});
 $('#btn-help').addEventListener('click', openTutorial);
 $('#btn-scada').addEventListener('click', () => openScadaModal(SCADA.page));
 $('#scada-close').addEventListener('click', closeScadaModal);
@@ -5810,8 +5823,8 @@ syncSceneMode();
 updateDiagnostics(true);
 runPipeline(false);
 if (window.innerWidth < 760) {
-  camera.position.set(24, 15, 34);
-  controls.target.set(0, 2.0, 0);
+  camera.position.set(20, 9.5, 28);
+  controls.target.set(0, 2.2, 0);
   controls.update();
   $$('.mini-btn[data-view]').forEach(b => b.classList.remove('active'));
 } else {
@@ -5985,6 +5998,13 @@ function resize() {
   camera.updateProjectionMatrix();
   renderer.setSize(w, h, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  if (w >= 760) {
+    const dock = $('.right-dock');
+    if (dock) dock.classList.remove('mobile-open');
+    document.body.classList.remove('mobile-panel-open');
+    const toggle = $('#mobile-panel-toggle');
+    if (toggle) toggle.textContent = '◧ 诊断面板';
+  }
 }
 window.addEventListener('resize', resize);
 resize();
