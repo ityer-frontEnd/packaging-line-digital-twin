@@ -15,7 +15,9 @@
 
 GitHub Pages：https://ityer-frontend.github.io/packaging-line-digital-twin/
 
-手机扫码或浏览器直接打开即可，无需本地服务器。
+![扫码体验](qr-card.png)
+
+手机扫码或浏览器直接打开即可，无需本地服务器。纯二维码 PNG：[qr.png](qr.png)。
 
 ## 本地运行
 
